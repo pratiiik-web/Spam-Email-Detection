@@ -121,9 +121,15 @@ Spam Email Detection/
 │   └── 01_eda.ipynb
 └── apps/
     └── app.py
+    
 ## Demo
 ![App Screenshot](<img width="2880" height="1704" alt="Screenshot 2026-06-07 005344" src="https://github.com/user-attachments/assets/f9f0a378-628e-4e9d-b015-7499f7624362" />
 )
+
+## Live Demo
+https://spam-email-detection-2vgl2nsx8lskflfgrupuzq.streamlit.app
+
+
 ## Key Lesson
 NLP transforms raw text into numbers using TF-IDF.
 Naive Bayes, despite being a simple algorithm, outperforms
