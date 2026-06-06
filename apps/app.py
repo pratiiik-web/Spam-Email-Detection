@@ -1,16 +1,33 @@
 import streamlit as st
-import joblib
-
-model = joblib.load('../Models/model.pkl')
-tfidf = joblib.load('../Models/tfidf.pkl')
-
+import pandas as pd
 import re, string
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
 
-def clean_text(text):
-    text = text.lower()
-    text = re.sub(r'\d+', '', text)
-    text = text.translate(str.maketrans('', '', string.punctuation))
-    return text.strip()
+@st.cache_resource
+def train_model():
+    df = pd.read_csv('Data/spam.csv', encoding='latin-1')
+    df = df[['v1', 'v2']]
+    df.columns = ['label', 'message']
+
+    def clean_text(text):
+        text = text.lower()
+        text = re.sub(r'\d+', '', text)
+        text = text.translate(str.maketrans('', '', string.punctuation))
+        return text.strip()
+
+    df['clean_msg'] = df['message'].apply(clean_text)
+    df['label_num'] = df['label'].map({'ham': 0, 'spam': 1})
+
+    tfidf = TfidfVectorizer(max_features=3000, stop_words='english')
+    X = tfidf.fit_transform(df['clean_msg'])
+    y = df['label_num']
+
+    model = MultinomialNB()
+    model.fit(X, y)
+    return model, tfidf
+
+model, tfidf = train_model()
 
 st.set_page_config(page_title="Spam Detector", page_icon="📧")
 st.title("📧 Spam Email Detector")
@@ -23,10 +40,16 @@ if st.button("Check Message"):
     if message.strip() == "":
         st.warning("Please enter a message.")
     else:
-        cleaned  = clean_text(message)
-        vector   = tfidf.transform([cleaned])
-        pred     = model.predict(vector)[0]
-        prob     = model.predict_proba(vector)[0]
+        def clean_text(text):
+            text = text.lower()
+            text = re.sub(r'\d+', '', text)
+            text = text.translate(str.maketrans('', '', string.punctuation))
+            return text.strip()
+
+        cleaned = clean_text(message)
+        vector  = tfidf.transform([cleaned])
+        pred    = model.predict(vector)[0]
+        prob    = model.predict_proba(vector)[0]
 
         st.divider()
         if pred == 1:
