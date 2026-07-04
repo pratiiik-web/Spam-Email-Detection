@@ -127,7 +127,7 @@ Spam Email Detection/
 )
 
 ## Live Demo
-https://spam-email-detection-2vgl2nsx8lskflfgrupuzq.streamlit.app
+🔗 [Open Dashboard](https://spam-email-detection-2vgl2nsx8lskflfgrupuzq.streamlit.app)
 
 
 ## Key Lesson
